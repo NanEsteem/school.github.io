@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<!--小说阅读页面-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta th:if="${catId == 9}" name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1">
+    <meta th:if="${catId != 9}" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title th:text="${title}"></title>
+    <meta name="keywords" th:content="${keyword}">
+    <meta name="description" th:content="${description}">
+    <meta property="og:type" content="novel_content"/>
+    <meta property="og:title" th:attr="content=${title}"/>
+    <meta property="og:description" th:attr="content=${description}"/>
+    <div th:include="common/css :: css"></div>
+    <script th:fragment="js" src="/js/jquery-1.9.1.js"></script>
+    <script th:fragment="js" src="/layui/layui.all.js"></script>
+    <style type="text/css">
+
+        .line-limit-length {
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+        }
+
+        .indexP p a {
+            color: #4c6978;
+        }
+
+        .Readarea {
+            font-size: 18px;
+            line-height: 35px;
+            padding: 10px;
+            color: #333;
+        }
+
+        div, p {
+            wrap-work: break-word;
+            word-break: break-all;
+            word-wrap: break-word;
+            word-break: normal;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -ms-box-sizing: border-box;
+        }
+
+        .indexDiv a {
+            margin-left: 20px;
+        }
+
+        .Readpage {
+            font-size: 14px;
+            padding: 0;
+            background: #d4eaf2;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+        }
+
+        div, p {
+            wrap-work: break-word;
+            word-break: break-all;
+            word-wrap: break-word;
+            word-break: normal;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            -ms-box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            /* background-attachment: fixed; */
+        }
+
+        user agent stylesheet
+        p {
+            display: block;
+            -webkit-margin-before: 1em;
+            -webkit-margin-after: 1em;
+            -webkit-margin-start: 0px;
+            -webkit-margin-end: 0px;
+        }
+
+        .huyanon {
+            border: 1px solid #64c878;
+            box-shadow: 0 1px 2px #b9ecc4 inset, 0 -1px 0 #6c9f76 inset, 0 -2px 3px #b9ecc4 inset;
+            background: -webkit-linear-gradient(top, #90dfa2, #84d494);
+            background: -moz-linear-gradient(top, #90dfa2, #84d494);
+            background: linear-gradient(top, #90dfa2, #84d494);
+        }
+
+        .Readpage a {
+            font-size: 16px;
+            padding: 2px 2px;
+            line-height: 35px;
+        }
+
+        .lightoff, .huyanoff, .sizebgon {
+            border: 1px solid #333;
+            box-shadow: 0 1px 2px #8b8b8b inset, 0 -1px 0 #3d3d3d inset, 0 -2px 3px #8b8b8b inset;
+            background: -webkit-linear-gradient(top, #656565, #4c4c4c);
+            background: -moz-linear-gradient(top, #656565, #4a4a4a);
+            background: linear-gradient(top, #656565, #4a4a4a);
+        }
+
+        .button {
+            width: 40px;
+            line-height: 38px;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 1px #333;
+            border-radius: 5px;
+            margin: 3px 0px 0px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        a {
+            color: #4c6978;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .lighton {
+            border: 1px solid #d2a000;
+            box-shadow: 0 1px 2px #fedd71 inset, 0 -1px 0 #a38b39 inset, 0 -2px 3px #fedd71 inset;
+            background: -webkit-linear-gradient(top, #fece34, #d8a605);
+            background: -moz-linear-gradient(top, #fece34, #d8a605);
+            background: linear-gradient(top, #fece34, #d8a605);
+        }
+
+        .screen_toolbar {
+            position: fixed;
+            width: 100%;
+            left: 0px;
+            bottom: 100px;
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+
+<body id="read">
+<div id="content">
+<input type="hidden" id="bookIdHidden" th:value="${bookContent.bookId}"/>
+<input type="hidden" id="contentIdHidden" th:value="${bookContent.id}"/>
+<input type="hidden" id="indexNumHidden" th:value="${bookContent.indexNum}"/>
+
+<script>
+    var token = localStorage.getItem("token");
+    $.get("/book/addVisit", {"bookId": $("#bookIdHidden").val(),"indexNum":$("#indexNumHidden").val(),"token":token}, function () {
+    });
+</script>
+
+<div style="height: 50px;line-height: 50px;text-align: center" class="layui-header header header-doc  layui-bg-cyan">
+
+    <div style="width:10%;float: left;margin-left: 10px">
+        <a href="javascript:history.go(-1)">
+            <i style="font-size: 20px;color: #92B8B1;" class="layui-icon">&#xe65c;</i></a>
+    </div>
+    <a style="color: #ffffff;" th:href="'/book/'+ ${bookContent.bookId} + '.html'"><b style="padding-left: 5%;float: left;width: 69%" class="line-limit-length" th:text="${indexName}"></b></a>
+    <div style="width:10%;float: right;margin-right: 10px"><a href="/">
+        <i style="font-size: 20px;color: #92B8B1;" class="layui-icon">&#xe68e;</i>
+    </a>
+    </div>
+</div>
+
+
+<p class="Readpage" style="background:#FFFFFF;padding:2px;">
+    <a id="lightdiv" class="button lighton" onclick="nr_setbg('light')">Turn on the Light</a>
+    <a id="huyandiv" class="button huyanon" onclick="nr_setbg('huyan')">Eye Care Pattern</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    Font-Choice：<a id="fontbig" class="sizebg" onclick="nr_setbg('big')">Large</a> <a id="fontmiddle" class="button sizebgon"
+                                                                         onclick="nr_setbg('middle')">Middle</a> <a
+        id="fontsmall" class="sizebg" onclick="nr_setbg('small')">Small</a>
+</p>
+
+<div class="indexDiv" style="height: 42px;line-height: 42px;text-align:center;background: #f2f2f2">
+
+    <a th:href="'/book/'+${bookContent.bookId}+'/'+${preIndexNum}+'.html'">Last</a>
+    <a th:href="'/book/'+${bookContent.bookId}+'/index.html'">Content</a>
+    <a th:href="'/book/'+${bookContent.bookId}+'/'+${nextIndexNum}+'.html'">Next</a>
+</div>
+
+<div th:replace="common/js :: js">
+</div>
+
+<div id="chaptercontent" class="Readarea ReadAjax_content screen_container"
+     style="color: rgb(0, 0, 0); font-size: 25px;">
+    <p style="width:100%;text-alight:center; overflow: auto;-webkit-overflow-scrolling:touch;" >&nbsp;&nbsp;&nbsp;&nbsp;
+        <span
+                 th:utext="${bookContent.content}"></span></p>
+</div>
+
+<div class="indexDiv" style="height: 42px;line-height: 42px;text-align:center;background: #f2f2f2">
+
+    <a th:href="'/book/'+${bookContent.bookId}+'/'+${preIndexNum}+'.html'">Last</a>
+    <a th:href="'/book/'+${bookContent.bookId}+'/index.html'">Content</a>
+    <a th:href="'/book/'+${bookContent.bookId}+'/'+${nextIndexNum}+'.html'">Next</a>
+</div>
+</div>
+
+
+<div th:replace="common/footer :: footer">
+</div>
+
+
+</body>
+
+<script>
+    var ua = navigator.userAgent;
+
+    var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
+
+        isIphone =!ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
+
+        isAndroid = ua.match(/(Android)\s+([\d.]+)/),
+
+        isMobile = isIphone || isAndroid;
+
+
+
+
+</script>
+
+<script>
+    (function () {
+
+        $("#content").css("min-height",($(window).height()-60)+"px");
+
+
+    })();
+
+
+</script>
+
+<script src="/js/read.js"></script>
+<script language="javascript">getset()</script>
+<script language="javascript">getset1()</script>
+<script language="javascript">
+    var books = localStorage.getItem("historyBooks");
+    var item = parseInt($("#bookIdHidden").val());
+    if (books) {
+        var booksArr = JSON.parse(books);
+        if (booksArr.length >= 50) {
+            booksArr.splice(0, 1);
+        }
+        booksArr.remove(item);
+        booksArr[booksArr.length] = item;
+    } else {
+        var booksArr = [item];
+    }
+
+    localStorage.setItem("historyBooks", JSON.stringify(booksArr));//
+
+    function toMyCollect() {
+        var token = localStorage.getItem("token");
+        if (token) {
+            window.location.href = "/book/search?token=" + token;
+        } else {
+            window.location.href = "/user/login.html";
+        }
+    }
+
+
+
+</script>
+
+</html>
